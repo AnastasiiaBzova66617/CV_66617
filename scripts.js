@@ -89,3 +89,45 @@ form.addEventListener('submit', function(e) {
         form.reset();
     }
 });
+
+
+// Zadanie 6 - Dynamic loading from JSON
+async function loadData() {
+    try {
+        const response = await fetch('./data.json'); // using fetch()
+        if (!response.ok) {
+            throw new Error('Error loading JSON');
+        }
+        const data = await response.json();
+
+        // (Tech Skills)
+        const skillsContainer = document.getElementById('tech-skills-list');
+        skillsContainer.innerHTML = ''; // clear container
+        data.techSkills.forEach(skill => {
+            const li = document.createElement('li');
+            li.innerHTML = `<strong>${skill}</strong>`;
+            skillsContainer.appendChild(li);
+        });
+
+        // (Projects)
+        const projectsContainer = document.getElementById('projects-list');
+        projectsContainer.innerHTML = ''; // clear container
+        data.projects.forEach(project => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <a href="${project.link}" target="_blank" rel="noopener noreferrer">
+                    <strong>${project.name}</strong>
+                </a>
+                [ ${project.tech} ]
+            `;
+            projectsContainer.appendChild(li);
+        });
+
+        console.log("Data loaded successfully from JSON - (Projects and Tech Skills)");
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+// Launch data loading when the page is loaded
+window.addEventListener('DOMContentLoaded', loadData);
