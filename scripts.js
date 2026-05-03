@@ -131,3 +131,48 @@ async function loadData() {
 
 // Launch data loading when the page is loaded
 window.addEventListener('DOMContentLoaded', loadData);
+
+
+// Task 7: Local Storage
+const goalInput = document.getElementById('goalInput');
+const addGoalBtn = document.getElementById('addGoalBtn');
+const goalsList = document.getElementById('goalsList');
+
+// Function to load data from LocalStorage
+function displayGoals() {
+    const savedGoals = JSON.parse(localStorage.getItem('userGoals')) || [];
+    goalsList.innerHTML = ''; // Clear list 
+    
+    savedGoals.forEach((goal, index) => {
+        const li = document.createElement('li');
+        li.className = 'goal-item';
+        li.innerHTML = `
+            <span>${goal}</span>
+            <button onclick="deleteGoal(${index})" class="delete-btn">Delete</button>
+        `;
+        goalsList.appendChild(li);
+    });
+}
+
+// Function to add a new item
+addGoalBtn.addEventListener('click', () => {
+    const newGoal = goalInput.value.trim();
+    if (newGoal) {
+        const savedGoals = JSON.parse(localStorage.getItem('userGoals')) || [];
+        savedGoals.push(newGoal);
+        localStorage.setItem('userGoals', JSON.stringify(savedGoals)); // Save
+        goalInput.value = ''; // Clear input
+        displayGoals(); // Update view
+    }
+});
+
+// Function to delete
+window.deleteGoal = function(index) {
+    const savedGoals = JSON.parse(localStorage.getItem('userGoals')) || [];
+    savedGoals.splice(index, 1); // Remove item by index
+    localStorage.setItem('userGoals', JSON.stringify(savedGoals));
+    displayGoals();
+};
+
+// Load list on page start
+document.addEventListener('DOMContentLoaded', displayGoals);
