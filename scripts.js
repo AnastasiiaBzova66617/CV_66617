@@ -27,11 +27,13 @@ sectionBtn.addEventListener('click', () => {
     }
 });
 
+// Zadanie 8: Backend
+const firebaseURL = 'https://cv-backend-66617-default-rtdb.firebaseio.com/messages.json';
 
 // Zadanie 5 - Form validation
 const form = document.getElementById('myForm');
 
-form.addEventListener('submit', function(e) {
+form.addEventListener('submit', async function(e) {
     e.preventDefault();
 
     // Clear previous errors
@@ -85,8 +87,34 @@ form.addEventListener('submit', function(e) {
 
     // IF IT'S VALID - SHOW SUCCESS MESSAGE
     if (isValid) {
-        document.getElementById('formSuccess').textContent = 'Form has been validated successfully!';
-        form.reset();
+        const formData = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            message: message,
+            timestamp: new Date().toISOString()
+        };
+
+        try {
+            // POST
+            const response = await fetch(firebaseURL, {
+                method: 'POST',
+                body: JSON.stringify(formData),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                document.getElementById('formSuccess').textContent = 'Message sent to server successfully!';
+                form.reset();
+            } else {
+                throw new Error('Failed to send data');
+            }
+        } catch (error) {
+            console.error('Backend Error:', error);
+            document.getElementById('formSuccess').textContent = 'Server error. Try again later.';
+        }
     }
 });
 
